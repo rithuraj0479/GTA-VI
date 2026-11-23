@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>GTA 6 Themed Project by Rithu</title>
+<style>
+  :root { --logo-scale: 1; --btn-scale: 1; }
+  * { box-sizing: border-box; }
+  body, html {
+    margin: 0; width: 100%; height: 100%; overflow: hidden;
+    background: #000; font-family: 'Arial Black', Impact, sans-serif;
+  }
+
+  #bg, canvas { position: fixed; inset: 0; width: 100%; height: 100%; }
+  #bg { background: url('gta.jpg') center/cover no-repeat; z-index: 1; }
+  canvas { z-index: 2; pointer-events: none; }
+
+  /* Taskbar */
+  .taskbar {
+    position: fixed; top: 0; left: 0; width: 100%; padding: 20px 35px;
+    display: flex; justify-content: flex-end; gap: 15px; z-index: 10;
+    background: linear-gradient(to bottom, rgba(0,0,0,.8), transparent);
+  }
+  .nav-btn {
+    display: flex; align-items: center; gap: 10px; padding: 10px 18px;
+    background: rgba(0,0,0,.65); border: 2px solid #fff; color: #fff;
+    font: 900 13px 'Arial Black', sans-serif; text-transform: uppercase;
+    letter-spacing: 1px; cursor: pointer; transform: skewX(-10deg);
+    box-shadow: 4px 4px 0 rgba(0,0,0,.8); transition: .2s;
+  }
+  .nav-btn > * { transform: skewX(10deg); }
+  .nav-btn svg { width: 18px; height: 18px; fill: #fff; transition: .2s; }
+  .nav-btn:hover { background: #fff; color: #000; box-shadow: 0 0 15px rgba(255,255,255,.6); }
+  .nav-btn:hover svg { fill: #000; }
+
+  /* GTA VI CSS Logo */
+  .logo {
+    position: fixed; top: 38%; left: 50%; width: 400px; height: 400px;
+    transform: translate(-50%, -50%) scale(var(--logo-scale));
+    display: flex; justify-content: center; align-items: center; z-index: 3;
+    filter: drop-shadow(0 0 25px rgba(219,51,159,.6)) drop-shadow(0 0 45px rgba(90,26,140,.5));
+    cursor: pointer; user-select: none; transition: transform .2s, top .3s, filter .2s;
+  }
+  .logo:hover {
+    transform: translate(-50%, -50%) scale(calc(var(--logo-scale) * 1.03));
+    filter: drop-shadow(0 0 30px rgba(13,241,219,.7)) drop-shadow(0 0 55px rgba(219,51,159,.7));
+  }
+  .logo.blink { animation: saBlink .38s cubic-bezier(.22,1,.36,1); }
+  @keyframes saBlink {
+    0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(var(--logo-scale)); }
+    20%, 60% { opacity: .25; transform: translate(-50%, -50%) scale(calc(var(--logo-scale)*1.07)); filter: brightness(2.2) drop-shadow(0 0 50px #0df1db); }
+    40% { opacity: 1; filter: brightness(1.6) drop-shadow(0 0 45px #fff); }
+  }
+  .vi {
+    position: absolute; font-size: 280px; font-weight: 900; letter-spacing: -20px;
+    background: linear-gradient(145deg, #3743d4, #db339f 40%, #ff8c40);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    -webkit-text-stroke: 6px #5a1a8c;
+  }
+  .stack {
+    position: relative; z-index: 4; display: flex; flex-direction: column;
+    transform: scaleY(1.1) translateX(-10px);
+  }
+  .stack span {
+    color: #fff; line-height: .82; letter-spacing: -2px;
+    -webkit-text-stroke: 4px #000; paint-order: stroke fill;
+    text-shadow: 3px 3px 0 #000, -2px -2px 0 #000;
+  }
+  .stack .g { font-size: 60px; }
+  .stack .t { font-size: 72px; margin-left: 8px; }
+  .stack .a { font-size: 60px; margin-left: 2px; }
+
+  /* Download Button */
+  .dl-btn {
+    position: fixed; top: 72%; left: 50%; z-index: 5;
+    transform: translateX(-50%) skewX(-8deg) scale(var(--btn-scale));
+    padding: 18px 45px; background: rgba(0,0,0,.85);
+    border: 4px solid #000; outline: 4px solid #5a1a8c;
+    box-shadow: 12px 12px 0 rgba(0,0,0,.85), 0 0 25px rgba(219,51,159,.5);
+    text-decoration: none; cursor: pointer; transition: .2s ease-out;
+  }
+  .dl-btn::before {
+    content: ''; position: absolute; inset: 0; width: 0%;
+    background: #0df1db; z-index: 1; transition: width .4s cubic-bezier(.25,.8,.25,1);
+  }
+  .dl-btn span {
+    position: relative; z-index: 2; font-size: 26px; color: #fff;
+    text-transform: uppercase; letter-spacing: 2px; white-space: nowrap;
+    -webkit-text-stroke: 1.5px #000; paint-order: stroke fill;
+  }
+  .dl-btn::after {
+    content: "latest GTA VI 4k 120fps 50mb storage with high performance optimisation for mobile";
+    position: absolute; bottom: -90px; left: 50%; transform: translateX(-50%);
+    width: 320px; padding: 12px 15px; background: rgba(0,0,0,.95);
+    color: #0df1db; font: bold 14px/1.4 Arial, sans-serif; text-align: center;
+    border: 2px solid #db339f; border-radius: 6px; letter-spacing: 1px;
+    box-shadow: 0 0 15px rgba(219,51,159,.5); opacity: 0; visibility: hidden;
+    pointer-events: none; transition: .3s cubic-bezier(.25,.8,.25,1); z-index: 3;
+  }
+  .dl-btn:hover {
+    transform: translateX(-50%) skewX(-8deg) translateY(-4px) scale(calc(var(--btn-scale)*1.02));
+    outline-color: #0df1db; box-shadow: 16px 16px 0 rgba(0,0,0,.9), 0 0 35px rgba(13,241,219,.6);
+  }
+  .dl-btn:hover::before { width: 100%; }
+  .dl-btn:hover::after { opacity: 1; visibility: visible; bottom: -70px; transform: translateX(-50%) skewX(8deg); }
+
+  /* Watermark (2x faster flicker, 50% dim opacity) */
+  .watermark {
+    position: fixed; bottom: 22px; right: 28px; z-index: 10; color: #fff;
+    font-size: 20px; text-transform: uppercase; letter-spacing: 2px;
+    text-shadow: 2px 2px 0 #000, 0 0 15px #db339f; pointer-events: none;
+  }
+  .watermark span { animation: blinkRithu .45s infinite; }
+  @keyframes blinkRithu {
+    0%, 49% { opacity: 1; color: #0df1db; text-shadow: 2px 2px 0 #000, 0 0 15px #0df1db, 0 0 25px #db339f; }
+    50%, 100% { opacity: .5; text-shadow: none; }
+  }
+
+  /* Modals */
+  .modal {
+    position: fixed; inset: 0; padding: 20px; z-index: 100;
+    background: rgba(0,0,0,.75); backdrop-filter: blur(6px);
+    display: flex; justify-content: center; align-items: center;
+    opacity: 0; visibility: hidden; transition: .3s;
+  }
+  .modal.active { opacity: 1; visibility: visible; }
+  .box {
+    position: relative; width: 100%; max-width: 350px; padding: 38px 28px;
+    background: #111; border: 4px solid #fff; outline: 4px solid #db339f;
+    box-shadow: 12px 12px 0 rgba(0,0,0,.9), 0 0 40px rgba(219,51,159,.7);
+    text-align: center; transform: skewX(-5deg) scale(.9); transition: .3s;
+  }
+  .modal.active .box { transform: skewX(-5deg) scale(1); }
+  .inner { transform: skewX(5deg); }
+  .inner h2 {
+    margin: 0 0 22px; color: #fff; font-size: 25px; text-transform: uppercase;
+    letter-spacing: 2px; -webkit-text-stroke: 1px #0df1db;
+  }
+  .close {
+    position: absolute; top: 2px; right: 14px; background: none; border: none;
+    color: #fff; font: bold 30px Arial; cursor: pointer;
+  }
+  .close:hover { color: #db339f; }
+  .field {
+    width: 100%; padding: 14px; margin-bottom: 16px;
+    background: rgba(255,255,255,.1); border: 2px solid #5a1a8c;
+    color: #fff; font: 900 14px 'Arial Black', sans-serif; outline: none;
+  }
+  .field:focus { border-color: #0df1db; background: rgba(0,0,0,.8); }
+  .m-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    width: 100%; padding: 14px; margin-top: 10px;
+    background: linear-gradient(90deg, #db339f, #ff8c40); color: #fff;
+    border: 2px solid #000; outline: 2px solid #fff; cursor: pointer;
+    font: 900 17px 'Arial Black', sans-serif; text-transform: uppercase;
+    text-decoration: none; transition: .2s;
+  }
+  .m-btn small { font-size: 11px; color: #000; letter-spacing: 1px; }
+  .m-btn:hover { background: linear-gradient(90deg, #0df1db, #3743d4); outline-color: #0df1db; }
+  .m-btn:hover small { color: #fff; }
+  .m-btn.slow { background: rgba(255,255,255,.08); border-color: #5a1a8c; outline-color: #db339f; }
+  .m-btn.slow small { color: #db339f; }
+  #hackMsg {
+    display: none; margin: 20px 0; color: #db339f; font-size: 28px;
+    text-transform: uppercase; -webkit-text-stroke: 1.5px #fff;
+    text-shadow: 0 0 20px #db339f, 0 0 40px #5a1a8c;
+  }
+
+  /* Responsive Breakpoints */
+  @media (max-width: 850px) { :root { --logo-scale: .75; --btn-scale: .85; } }
+  @media (max-width: 550px) {
+    :root { --logo-scale: .55; --btn-scale: .65; }
+    .taskbar { flex-direction: column; padding: 12px; gap: 8px; }
+    .nav-btn { width: 100%; justify-content: center; font-size: 12px; padding: 8px; }
+    .logo { top: 48%; }
+    .dl-btn { top: 78%; }
+    .watermark { font-size: 14px; bottom: 14px; right: 14px; }
+  }
+  @media (max-height: 500px) {
+    :root { --logo-scale: .4; --btn-scale: .6; }
+    .logo { top: 46%; } .dl-btn { top: 85%; }
+  }
+</style>
+</head>
+<body>
+  <div id="bg"></div>
+  <canvas id="c"></canvas>
+
+  <div class="taskbar">
+    <button class="nav-btn" id="gNav">
+      <svg viewBox="0 0 24 24"><path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"/></svg>
+      <span>Login to Google</span>
+    </button>
+    <button class="nav-btn">
+      <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      <span>Login to Rockstar Games</span>
+    </button>
+  </div>
+
+  <div class="logo" id="logo">
+    <div class="vi">VI</div>
+    <div class="stack"><span class="g">grand</span><span class="t">theft</span><span class="a">auto</span></div>
+  </div>
+
+  <a href="#" class="dl-btn" id="dlBtn"><span>download GTA VI .apk</span></a>
+  <div class="watermark">MADE BY <span>RITHU</span></div>
+
+  <div class="modal" id="dlModal">
+    <div class="box"><button class="close">&times;</button><div class="inner">
+      <h2>Select Method</h2>
+      <button class="m-btn" id="toGoogle">Log into Google<small>Faster Downloading</small></button>
+      <a href="https://www.youtube.com/watch?v=xvFZjo5PgG0" class="m-btn slow">Direct Download<small>Slower Downloading</small></a>
+    </div></div>
+  </div>
+
+  <div class="modal" id="gModal">
+    <div class="box"><button class="close">&times;</button><div class="inner">
+      <div id="gForm">
+        <h2>Google Login</h2>
+        <input class="field" placeholder="Username / Email">
+        <input class="field" type="password" placeholder="Password">
+        <button class="m-btn" id="hackBtn">Login</button>
+      </div>
+      <div id="hackMsg">your account is hacked 🤣</div>
+    </div></div>
+  </div>
+
+<script>
+  // San Andreas GUI Audio Synth
+  let actx;
+  const playSA = () => {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    if (actx.state === 'suspended') actx.resume();
+    const t = actx.currentTime;
+    [[880, 1318.5, 'triangle', .28, .16], [240, 75, 'sine', .32, .065]].forEach(([f1, f2, type, vol, dur]) => {
+      const o = actx.createOscillator(), g = actx.createGain();
+      o.type = type; o.frequency.setValueAtTime(f1, t);
+      type === 'triangle' ? o.frequency.setValueAtTime(f2, t + .045) : o.frequency.exponentialRampToValueAtTime(f2, t + dur);
+      g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.001, t + dur);
+      o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t + dur + .01);
+    });
+  };
+
+  // 3D Random-Axis Particles + 0.2s Boost
+  const c = document.getElementById('c'), ctx = c.getContext('2d');
+  let w, h, speed = 1, boostTimer;
+  const resize = () => { w = c.width = innerWidth; h = c.height = innerHeight; };
+  resize(); addEventListener('resize', resize);
+
+  const pts = Array.from({ length: 188 }, () => {
+    const p = {
+      reset() {
+        Object.assign(this, {
+          x: (Math.random() - .5) * 3000, y: (Math.random() - .5) * 3000, z: 2000,
+          vx: (Math.random() - .5) * 4, vy: (Math.random() - .5) * 4, vz: Math.random() * 2.2 + 1.2,
+          s: Math.random() * 2.5 + .5
+        });
+        this.px = this.x; this.py = this.y; this.pz = this.z;
+      }
+    };
+    p.reset(); p.z = p.pz = Math.random() * 2000;
+    return p;
+  });
+
+  (function loop() {
+    ctx.clearRect(0, 0, w, h);
+    for (const p of pts) {
+      p.px = p.x; p.py = p.y; p.pz = p.z;
+      p.vx = Math.max(-4, Math.min(4, p.vx + (Math.random() - .5) * .25));
+      p.vy = Math.max(-4, Math.min(4, p.vy + (Math.random() - .5) * .25));
+      p.vz = Math.max(.6, Math.min(4.5, p.vz + (Math.random() - .5) * .15));
+      p.x += p.vx * speed; p.y += p.vy * speed; p.z -= p.vz * speed;
+      if (p.z <= 0 || Math.abs(p.x) > 2500 || Math.abs(p.y) > 2500) p.reset();
+
+      const sc = 350 / (350 + p.z), x = p.x * sc + w / 2, y = p.y * sc + h / 2;
+      const op = Math.min(1, (2000 - p.z) / 500);
+      if (x > 0 && x < w && y > 0 && y < h) {
+        ctx.beginPath();
+        if (speed > 1) {
+          const psc = 350 / (350 + p.pz);
+          ctx.moveTo(p.px * psc + w / 2, p.py * psc + h / 2); ctx.lineTo(x, y);
+          ctx.strokeStyle = `rgba(255,255,255,${op})`; ctx.lineWidth = p.s * sc * 2; ctx.stroke();
+        } else {
+          ctx.arc(x, y, p.s * sc, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255,255,255,${op})`; ctx.fill();
+        }
+      }
+    }
+    requestAnimationFrame(loop);
+  })();
+
+  // Interactions
+  const $ = id => document.getElementById(id);
+  const openG = () => { $('gForm').style.display = 'block'; $('hackMsg').style.display = 'none'; $('gModal').classList.add('active'); };
+
+  $('logo').onclick = () => {
+    playSA(); speed = 15; clearTimeout(boostTimer);
+    boostTimer = setTimeout(() => speed = 1, 200);
+    $('logo').classList.remove('blink'); void $('logo').offsetWidth; $('logo').classList.add('blink');
+  };
+  $('gNav').onclick = e => { e.preventDefault(); playSA(); openG(); };
+  $('dlBtn').onclick = e => { e.preventDefault(); playSA(); $('dlModal').classList.add('active'); };
+  $('toGoogle').onclick = () => { playSA(); $('dlModal').classList.remove('active'); openG(); };
+  $('hackBtn').onclick = () => { playSA(); $('gForm').style.display = 'none'; $('hackMsg').style.display = 'block'; };
+  document.querySelectorAll('.modal').forEach(m => m.onclick = e => {
+    if (e.target === m || e.target.classList.contains('close')) m.classList.remove('active');
+  });
+</script>
+</body>
+</html>
