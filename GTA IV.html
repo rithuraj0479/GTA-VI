@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- Viewport meta tag ensures proper scaling and prevents accidental zooming on mobile devices -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GTA 6 Themed Project by Rithu</title>
+    <style>
+        /* --- RESPONSIVE SCALING VARIABLES --- */
+        :root {
+            --logo-scale: 1;
+            --btn-scale: 1;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #000;
+            font-family: 'Arial Black', Impact, sans-serif;
+        }
+
+        #bg-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('gta.jpg'); 
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: 1;
+        }
+
+        canvas {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2; 
+            pointer-events: none; 
+        }
+
+        /* --- TOP TASKBAR --- */
+        .top-taskbar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 40px;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            z-index: 10;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+        }
+
+        .social-login {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid #fff;
+            color: #fff;
+            font-family: 'Arial Black', sans-serif;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transform: skewX(-10deg);
+            transition: all 0.2s ease-out;
+            box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.8);
+            box-sizing: border-box;
+        }
+
+        .social-login span {
+            transform: skewX(10deg); 
+        }
+
+        .social-login svg {
+            width: 20px;
+            height: 20px;
+            fill: #fff;
+            transform: skewX(10deg);
+            transition: fill 0.2s ease-out;
+        }
+
+        .social-login:hover {
+            background: #fff;
+            color: #000;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+        }
+
+        .social-login:hover svg {
+            fill: #000;
+        }
+
+        /* --- CSS LOGO STYLES --- */
+        .logo-container {
+            position: absolute;
+            top: 38%; 
+            left: 50%;
+            /* Uses the CSS variable to scale perfectly on mobile */
+            transform: translate(-50%, -50%) scale(var(--logo-scale));
+            z-index: 3; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 400px;
+            height: 400px;
+            filter: drop-shadow(0 0 25px rgba(219, 51, 159, 0.6)) drop-shadow(0 0 45px rgba(90, 26, 140, 0.5));
+            transition: transform 0.3s ease;
+        }
+
+        .roman-numeral {
+            font-size: 280px;
+            font-weight: 900;
+            letter-spacing: -20px;
+            background: linear-gradient(145deg, #3743d4 0%, #db339f 40%, #ff8c40 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            -webkit-text-stroke: 6px #5a1a8c;
+            position: absolute;
+        }
+
+        .text-stack {
+            position: absolute;
+            z-index: 4;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            transform: scaleY(1.1) translateX(-10px); 
+        }
+
+        .text-stack span {
+            color: white;
+            line-height: 0.82;
+            letter-spacing: -2px;
+            -webkit-text-stroke: 4px #000;
+            paint-order: stroke fill;
+            text-shadow: 3px 3px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000;
+        }
+
+        .text-grand { font-size: 60px; }
+        .text-theft { font-size: 72px; margin-left: 8px; }
+        .text-auto { font-size: 60px; margin-left: 2px; }
+
+        /* --- GTA LOADING BAR DOWNLOAD BUTTON --- */
+        .download-btn {
+            position: absolute;
+            top: 72%; 
+            left: 50%;
+            /* Uses the CSS variable to scale perfectly on mobile */
+            transform: translateX(-50%) skewX(-8deg) scale(var(--btn-scale));
+            z-index: 5;
+            padding: 18px 45px;
+            background: rgba(0, 0, 0, 0.85); 
+            border: 4px solid #000;
+            outline: 4px solid #5a1a8c;
+            text-decoration: none;
+            cursor: pointer;
+            box-shadow: 12px 12px 0px rgba(0, 0, 0, 0.85), 0 0 25px rgba(219, 51, 159, 0.5);
+            transition: all 0.2s ease-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .download-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 0%;
+            background: #0df1db; 
+            z-index: 1; 
+            transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .btn-text {
+            position: relative;
+            z-index: 2; 
+            font-size: 26px;
+            font-weight: 900;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            white-space: nowrap;
+            -webkit-text-stroke: 1.5px #000;
+            paint-order: stroke fill;
+            transition: color 0.2s ease;
+        }
+
+        .download-btn::after {
+            content: "latest GTA IV 4k 120fps 50mb storage with high performance optimisation for mobile";
+            position: absolute;
+            bottom: -90px; 
+            left: 50%;
+            transform: translateX(-50%);
+            width: 320px;
+            background: rgba(0, 0, 0, 0.95);
+            color: #0df1db; 
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            font-weight: bold;
+            text-align: center;
+            line-height: 1.4;
+            padding: 12px 15px;
+            border: 2px solid #db339f; 
+            border-radius: 6px;
+            box-shadow: 0 0 15px rgba(219, 51, 159, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            white-space: normal; 
+            letter-spacing: 1px;
+            pointer-events: none; 
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            z-index: 3;
+        }
+
+        /* Hover states multiply the base scale so animations don't break responsiveness */
+        .download-btn:hover {
+            transform: translateX(-50%) skewX(-8deg) translateY(-4px) scale(calc(var(--btn-scale) * 1.02));
+            outline-color: #0df1db;
+            box-shadow: 16px 16px 0px rgba(0, 0, 0, 0.9), 0 0 35px rgba(13, 241, 219, 0.6);
+        }
+
+        .download-btn:hover::before { width: 100%; }
+        .download-btn:hover::after {
+            opacity: 1;
+            visibility: visible;
+            bottom: -70px; 
+            transform: translateX(-50%) skewX(8deg); 
+        }
+
+        .download-btn:active {
+            transform: translateX(-50%) skewX(-8deg) translateY(4px) scale(calc(var(--btn-scale) * 0.98));
+            box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.9);
+        }
+
+        /* --- WATERMARK --- */
+        .watermark {
+            position: absolute;
+            bottom: 25px;
+            right: 30px;
+            z-index: 10;
+            color: #fff;
+            font-size: 20px;
+            text-transform: uppercase; 
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 0 #000, 0 0 15px #db339f, 0 0 25px #db339f;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        /* --- MODAL DIALOG STYLES --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(6px);
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            padding: 20px; /* Prevents modal from touching edges on small screens */
+            box-sizing: border-box;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: #111;
+            padding: 40px 30px;
+            border: 4px solid #fff;
+            outline: 4px solid #db339f;
+            box-shadow: 12px 12px 0px rgba(0,0,0,0.9), 0 0 40px rgba(219,51,159,0.7);
+            text-align: center;
+            position: relative;
+            transform: skewX(-5deg) scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            
+            /* Responsive width limits */
+            width: 100%;
+            max-width: 350px;
+            box-sizing: border-box;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: skewX(-5deg) scale(1);
+        }
+
+        .modal-inner {
+            transform: skewX(5deg);
+        }
+
+        .modal-inner h2 {
+            color: #fff;
+            margin-top: 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            -webkit-text-stroke: 1px #0df1db;
+            margin-bottom: 25px;
+            font-size: 26px;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #5a1a8c;
+            color: #fff;
+            font-family: 'Arial Black', sans-serif;
+            font-size: 14px;
+            box-sizing: border-box;
+            outline: none;
+            transition: all 0.2s;
+            text-transform: uppercase;
+        }
+
+        .modal-input::placeholder { color: rgba(255, 255, 255, 0.5); }
+
+        .modal-input:focus {
+            border-color: #0df1db;
+            background: rgba(0, 0, 0, 0.8);
+            box-shadow: 0 0 15px rgba(13,241,219,0.4);
+        }
+
+        .modal-submit {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(90deg, #db339f, #ff8c40);
+            color: #fff;
+            font-family: 'Arial Black', sans-serif;
+            font-size: 18px;
+            border: 2px solid #000;
+            outline: 2px solid #fff;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+            margin-top: 10px;
+            text-decoration: none;
+            display: inline-block;
+            box-sizing: border-box;
+        }
+
+        .modal-submit:hover {
+            background: linear-gradient(90deg, #0df1db, #3743d4);
+            outline-color: #0df1db;
+            box-shadow: 0 0 20px rgba(13, 241, 219, 0.6);
+        }
+
+        .option-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .option-btn .sub-text {
+            font-size: 11px;
+            color: #000;
+            letter-spacing: 1px;
+            -webkit-text-stroke: 0; 
+        }
+
+        .option-btn:hover .sub-text { color: #fff; }
+
+        .direct-dl {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #5a1a8c;
+            outline-color: #db339f;
+        }
+
+        .direct-dl .sub-text { color: #db339f; }
+
+        .direct-dl:hover {
+            background: rgba(90, 26, 140, 0.4);
+            outline-color: #db339f;
+            box-shadow: 0 0 20px rgba(219, 51, 159, 0.6);
+        }
+        
+        .direct-dl:hover .sub-text { color: #ff8c40; }
+
+        .close-btn {
+            position: absolute;
+            top: 0px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: Arial, sans-serif;
+            transition: color 0.2s;
+        }
+
+        .close-btn:hover { color: #db339f; }
+
+        .hacked-text {
+            color: #db339f;
+            font-size: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            line-height: 1.3;
+            -webkit-text-stroke: 1.5px #fff;
+            text-shadow: 0 0 20px #db339f, 0 0 40px #5a1a8c;
+            margin: 20px 0;
+            display: none; 
+        }
+
+
+        /* =========================================================
+           RESPONSIVE MEDIA QUERIES
+           Adjusts layout automatically based on screen size
+           ========================================================= */
+        
+        /* Tablets and smaller laptops */
+        @media (max-width: 850px) {
+            :root {
+                --logo-scale: 0.75;
+                --btn-scale: 0.85;
+            }
+        }
+
+        /* Mobile Phones */
+        @media (max-width: 550px) {
+            :root {
+                --logo-scale: 0.55;
+                --btn-scale: 0.65;
+            }
+
+            /* Stack taskbar buttons on top of each other on narrow screens */
+            .top-taskbar {
+                flex-direction: column;
+                align-items: center;
+                padding: 15px;
+                gap: 10px;
+                background: rgba(0, 0, 0, 0.5); /* slightly darker for readability */
+            }
+
+            .social-login {
+                width: 100%;
+                justify-content: center;
+                font-size: 12px;
+                padding: 8px 15px;
+            }
+
+            /* Adjust button position to prevent overlap with the stacked taskbar */
+            .download-btn {
+                top: 78%;
+            }
+
+            /* Scale down watermark and tuck it further into the corner */
+            .watermark {
+                font-size: 14px;
+                bottom: 15px;
+                right: 15px;
+            }
+            
+            /* Resize hacked text so it doesn't break out of the dialog box */
+            .hacked-text {
+                font-size: 24px;
+            }
+        }
+
+        /* Extra tiny screens (iPhone SE, old devices) */
+        @media (max-width: 360px) {
+            :root {
+                --logo-scale: 0.45;
+                --btn-scale: 0.55;
+            }
+            .modal-content {
+                padding: 30px 15px; /* Saves space inside the box */
+            }
+        }
+
+        /* Short landscape screens (turning phone sideways) */
+        @media (max-height: 500px) {
+            :root {
+                --logo-scale: 0.4;
+                --btn-scale: 0.6;
+            }
+            .download-btn {
+                top: 85%;
+            }
+            .top-taskbar {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="bg-container"></div>
+    <canvas id="particleCanvas"></canvas>
+
+    <!-- Taskbar -->
+    <div class="top-taskbar">
+        <button class="social-login" id="googleTaskbarBtn">
+            <svg viewBox="0 0 24 24">
+                <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"/>
+            </svg>
+            <span>Login to Google</span>
+        </button>
+        
+        <button class="social-login">
+            <svg viewBox="0 0 24 24">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+            <span>Login to Rockstar Games</span>
+        </button>
+    </div>
+
+    <div class="logo-container">
+        <div class="roman-numeral">VI</div>
+        <div class="text-stack">
+            <span class="text-grand">grand</span>
+            <span class="text-theft">theft</span>
+            <span class="text-auto">auto</span>
+        </div>
+    </div>
+
+    <a href="#" class="download-btn" id="mainDownloadBtn">
+        <span class="btn-text">download GTA IV .apk</span>
+    </a>
+
+    <!-- Watermark -->
+    <div class="watermark">MADE BY RITHU</div>
+
+    <!-- Download Options Modal -->
+    <div class="modal-overlay" id="downloadModal">
+        <div class="modal-content">
+            <button class="close-btn" id="closeDownloadModal">&times;</button>
+            <div class="modal-inner">
+                <h2>Select Method</h2>
+                
+                <button class="modal-submit option-btn" id="triggerGoogleLogin">
+                    Log into Google
+                    <span class="sub-text">Faster Downloading</span>
+                </button>
+                
+                <a href="https://www.youtube.com/watch?v=xvFZjo5PgG0" class="modal-submit option-btn direct-dl">
+                    Direct Download
+                    <span class="sub-text">Slower Downloading</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Google Login Modal -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-content">
+            <button class="close-btn" id="closeLoginModal">&times;</button>
+            <div class="modal-inner">
+                
+                <!-- The actual form elements -->
+                <div id="loginFormContainer">
+                    <h2>Google Login</h2>
+                    <input type="text" placeholder="Username / Email" class="modal-input">
+                    <input type="password" placeholder="Password" class="modal-input">
+                    <button class="modal-submit" id="submitHackBtn">Login</button>
+                </div>
+
+                <!-- The hidden hacked message -->
+                <div class="hacked-text" id="hackedMessage">
+                    your account is hacked 🤣
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Particle System Script
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let width, height;
+        let particles = [];
+
+        const focalLength = 350; 
+        const particleCount = 150; 
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+
+        class Particle {
+            constructor() {
+                this.reset();
+                this.z = Math.random() * 2000;
+            }
+
+            reset() {
+                this.x = (Math.random() - 0.5) * 3000;
+                this.y = (Math.random() - 0.5) * 3000;
+                this.z = 2000; 
+                this.baseSize = Math.random() * 2.5 + 0.5; 
+                this.vz = (Math.random() * 2) + 1.5; 
+            }
+
+            update() {
+                this.z -= this.vz; 
+                if (this.z <= 0) {
+                    this.reset();
+                }
+            }
+
+            draw() {
+                const scale = focalLength / (focalLength + this.z);
+                const px = (this.x * scale) + (width / 2);
+                const py = (this.y * scale) + (height / 2);
+                
+                const currentSize = this.baseSize * scale;
+                const opacity = Math.min(1, (2000 - this.z) / 500); 
+
+                if (px > 0 && px < width && py > 0 && py < height) {
+                    ctx.beginPath();
+                    ctx.arc(px, py, currentSize, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+                    ctx.fill();
+                }
+            }
+        }
+
+        function init() {
+            resize();
+            window.addEventListener('resize', resize);
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+            animate();
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+
+        init();
+
+        // Modals Logic Script
+        const googleTaskbarBtn = document.getElementById('googleTaskbarBtn');
+        const mainDownloadBtn = document.getElementById('mainDownloadBtn');
+        const triggerGoogleLogin = document.getElementById('triggerGoogleLogin');
+        
+        const loginModal = document.getElementById('loginModal');
+        const downloadModal = document.getElementById('downloadModal');
+        
+        const closeLoginModal = document.getElementById('closeLoginModal');
+        const closeDownloadModal = document.getElementById('closeDownloadModal');
+
+        // Hack trigger elements
+        const submitHackBtn = document.getElementById('submitHackBtn');
+        const loginFormContainer = document.getElementById('loginFormContainer');
+        const hackedMessage = document.getElementById('hackedMessage');
+
+        // Reset hack message when opening login directly from taskbar
+        function resetLoginForm() {
+            loginFormContainer.style.display = 'block';
+            hackedMessage.style.display = 'none';
+        }
+
+        // 1. Top taskbar Google button opens Login Modal
+        googleTaskbarBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            resetLoginForm();
+            loginModal.classList.add('active');
+        });
+
+        // 2. Main Download button opens Download Options Modal
+        mainDownloadBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            downloadModal.classList.add('active');
+        });
+
+        // 3. "Log into Google" inside Download Options opens Login Modal
+        triggerGoogleLogin.addEventListener('click', (e) => {
+            e.preventDefault();
+            resetLoginForm();
+            downloadModal.classList.remove('active');
+            loginModal.classList.add('active');
+        });
+
+        // 4. THE HACK JOKE: Submitting the fake login form
+        submitHackBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            loginFormContainer.style.display = 'none';
+            hackedMessage.style.display = 'block';
+        });
+
+        // Close functions for 'X' buttons
+        closeLoginModal.addEventListener('click', () => {
+            loginModal.classList.remove('active');
+        });
+        
+        closeDownloadModal.addEventListener('click', () => {
+            downloadModal.classList.remove('active');
+        });
+
+        // Close functions when clicking outside the dialog boxes
+        window.addEventListener('click', (e) => {
+            if (e.target === loginModal) {
+                loginModal.classList.remove('active');
+            }
+            if (e.target === downloadModal) {
+                downloadModal.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
